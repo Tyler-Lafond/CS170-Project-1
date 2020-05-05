@@ -1,13 +1,13 @@
 #include <iostream>
 #include "problem.hpp"
 
-Problem::Problem(int puzzle[][3][3])
+Problem::Problem(int* puzzle)
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < DIMENSION_SIZE; i++)
 	{
-		for (int j = 0; j < 3; j++)
+		for (int j = 0; j < DIMENSION_SIZE; j++)
 		{
-			this->puzzle[i][j] = *puzzle[i][j];
+			this->puzzle[i][j] = puzzle[i * DIMENSION_SIZE + j];
 		}
 	}
 }
@@ -32,21 +32,22 @@ void Problem::swap(std::pair <int, int> blank, std::pair <int, int> tile)
 int Problem::evaluate()
 {
 	int cost = 0;
-	int values[9] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+	int size = DIMENSION_SIZE * DIMENSION_SIZE;
+	int values[size] = {1, 2, 3, 4, 5, 6, 7, 8, 0};
 	bool found = false;
 
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < size; i++)
 	{
-		found = false;
-		for (int j = 0; j < 3; j++)
+		for (int j = 0; j < DIMENSION_SIZE; j++)
 		{
-			for (int k = 0; k < 3; k++)
+			for (int k = 0; k < DIMENSION_SIZE; k++)
 			{
 				if (puzzle[j][k] == values[i])
 				{
-					int diffX = k - i % 3;
-					int diffY = j - i / 3;
+					int diffX = k - i % DIMENSION_SIZE;
+					int diffY = j - i / DIMENSION_SIZE;
 					cost += abs(diffX) + abs(diffY);
+					break;
 				}
 			}
 		}
@@ -58,11 +59,11 @@ int Problem::evaluate()
 bool Problem::compare(Problem* problem)
 {
 	int* puzzleB = problem->getPuzzle();
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < DIMENSION_SIZE; i++)
 	{
-		for (int j = 0; j < 3; j++)
+		for (int j = 0; j < DIMENSION_SIZE; j++)
 		{
-			if (puzzle[i][j] != puzzleB[i * 3 + j])
+			if (puzzle[i][j] != puzzleB[i * DIMENSION_SIZE + j])
 			{
 				return false;
 			}
@@ -70,4 +71,16 @@ bool Problem::compare(Problem* problem)
 	}
 
 	return true;
+}
+
+void Problem::print()
+{
+	for (int i = 0; i < DIMENSION_SIZE; i++)
+	{
+		for (int j = 0; j < DIMENSION_SIZE; j++)
+		{
+			std::cout << puzzle[i][j] << " ";
+		}
+		std::cout << std::endl;
+	}
 }
