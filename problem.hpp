@@ -1,6 +1,7 @@
 #ifndef __PROBLEM_HPP__
 #define __PROBLEM_HPP__
 
+#include <string>
 #include <utility>
 #include <cstdlib>
 
@@ -13,7 +14,7 @@ class Problem
 		~Problem();
 		int* getPuzzle();
 		void swap(std::pair <int, int> blank, std::pair <int, int> tile);
-		int evaluate();
+		double evaluate(std::string mode);
 		bool compare(Problem* problem);
 		void print();
 	private:

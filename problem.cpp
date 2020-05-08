@@ -1,4 +1,5 @@
 #include <iostream>
+#include <math.h>
 #include "problem.hpp"
 
 Problem::Problem(int* puzzle)
@@ -29,13 +30,13 @@ void Problem::swap(std::pair <int, int> blank, std::pair <int, int> tile)
 	puzzle[tile.first][tile.second] = temp;
 }
 
-int Problem::evaluate()
+double Problem::evaluate(std::string mode)
 {
-	int cost = 0;
+	double cost = 0;
+	int counter = 0;
 	int size = DIMENSION_SIZE * DIMENSION_SIZE;
 	int values[size] = {1, 2, 3, 4, 5, 6, 7, 8, 0};
 	bool found = false;
-
 	for (int i = 0; i < size; i++)
 	{
 		for (int j = 0; j < DIMENSION_SIZE; j++)
@@ -44,9 +45,25 @@ int Problem::evaluate()
 			{
 				if (puzzle[j][k] == values[i])
 				{
-					int diffX = k - i % DIMENSION_SIZE;
-					int diffY = j - i / DIMENSION_SIZE;
-					cost += abs(diffX) + abs(diffY);
+					if (mode == "Misplaced")
+					{
+						if(j != (i / 3) || k != (i % 3))
+						{
+							if (counter < DIMENSION_SIZE * DIMENSION_SIZE - 1)
+							{
+								cost++;
+							}
+							counter++;
+						}
+					}
+					else if (mode == "Euclidean")
+					{
+						if (counter < DIMENSION_SIZE * DIMENSION_SIZE - 1)
+						{
+							cost += sqrt(pow(static_cast<double>(j) - static_cast<double>(i/3), 2.0) + pow(static_cast<double>(k) - static_cast<double>(i%3), 2.0));
+						}
+						counter++;
+					}
 					break;
 				}
 			}
@@ -64,12 +81,14 @@ bool Problem::compare(Problem* problem)
 		for (int j = 0; j < DIMENSION_SIZE; j++)
 		{
 			if (puzzle[i][j] != puzzleB[i * DIMENSION_SIZE + j])
-			{
+			{	
+				puzzleB = 0;
 				return false;
 			}
 		}
 	}
 
+	puzzleB = 0;
 	return true;
 }
 
@@ -79,7 +98,14 @@ void Problem::print()
 	{
 		for (int j = 0; j < DIMENSION_SIZE; j++)
 		{
-			std::cout << puzzle[i][j] << " ";
+			if (puzzle[i][j] == 0)
+			{
+				std::cout << "b ";
+			}
+			else
+			{
+				std::cout << puzzle[i][j] << " ";
+			}
 		}
 		std::cout << std::endl;
 	}
